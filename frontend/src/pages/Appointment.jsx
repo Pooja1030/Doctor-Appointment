@@ -3,7 +3,7 @@ import React, { useContext, useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { AppContext } from '../context/AppContext'
 import { assets } from '../assets/assets/assets_frontend/assets'
-import RealtedDoctors from '../components/RealtedDoctors'
+import RelatedDoctors from '../components/RelatedDoctors'
 
 
 const Appointment = () => {
@@ -139,7 +139,7 @@ const Appointment = () => {
 
 
         {/* Listing Related Doctors */}
-        <RealtedDoctors docId={docId} speciality={docInfo.speciality} />
+        <RelatedDoctors docId={docId} speciality={docInfo.speciality} />
     </div>
   )
 }
