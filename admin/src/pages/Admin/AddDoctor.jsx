@@ -1,6 +1,9 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { assets } from '../../assets/assets'
+import { AdminContext } from '../../context/AdminContext'
+import {toast} from 'react-toastify'
+import axios from 'axios'
 
 const AddDoctor = () => {
 
@@ -17,14 +20,61 @@ const AddDoctor = () => {
   const [address1,setAddress1] = useState('')
   const [address2,setAddress2] = useState('')
 
-  const onSubmitHandler = async (event) => {
+  const { backendUrl, aToken } = useContext(AdminContext)
 
+  const onSubmitHandler = async (event) => {
+    event.preventDefault()
+
+    try {
+      if(!docImg){
+        return toast.error('Image Not Selected')
+      }
+
+      const formData = new FormData()
+
+      formData.append('image', docImg)
+      formData.append('name', name)
+      formData.append('email', email)
+      formData.append('password', password)
+      formData.append('experience', experience)
+      formData.append('fees', Number(fees))
+      formData.append('about', about)
+      formData.append('speciality', speciality)
+      formData.append('degree', degree)
+      formData.append('address', JSON.stringify({line1:address1, line2:address2}))
+
+
+      // console.log formData
+      formData.forEach((value,key)=> {
+        console.log(`${key} : ${value}`);
+      })
+
+      const {data} = await axios.post(backendUrl + '/api/admin/add-doctor', formData, {headers:{aToken}})
+
+      if(data.success){
+        toast.success(data.message)
+        setDocImg(false)
+        setName('')
+        setPassword('')
+        setEmail('')
+        setAddress1('')
+        setAddress2('')
+        setDegree('')
+        setAbout('')
+        setFees('')
+      } else {
+        toast.error(data.message)
+      }
+
+
+    } catch (error) {
+      toast.error(error.message)
+      console.log(error)
+    }
   }
 
-
-
   return (
-    <form className='m-5 w-full'>
+    <form onSubmit={onSubmitHandler} className='m-5 w-full'>
 
     <p className='mb-3 text-lg font-medium'>Add Doctor</p>
     <div className='bg-white px-8 py-8 border rounded w-full max-w-4xl max-h-[80vh] overflow-y-scroll'>
