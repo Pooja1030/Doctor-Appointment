@@ -1,9 +1,29 @@
 /* eslint-disable no-unused-vars */
-import React from 'react'
+import React, { useContext, useEffect } from 'react'
+import { AdminContext } from '../../context/AdminContext'
+import { assets } from '../../assets/assets'
 
 const Dashboard = () => {
-  return (
-    <div>
+
+  const {aToken, getDashData, cancelAppointment, dashData} = useContext(AdminContext)
+
+  useEffect(() => {
+    if(aToken){
+      getDashData()
+    }
+  },[aToken])
+
+
+  return dashData && (
+    <div className='m-5'>
+
+      <div>
+
+        <div>
+          <img src={assets.doctor_icon} alt=''/>
+        </div>
+
+      </div>
       
     </div>
   )
