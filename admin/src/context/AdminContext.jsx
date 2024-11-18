@@ -1,6 +1,7 @@
 import { createContext, useState } from "react"
 import axios from "axios"
 import {toast} from 'react-toastify'
+import PropTypes from 'prop-types'
 
 
 export const AdminContext = createContext()
@@ -110,5 +111,10 @@ const AdminContextProvider = (props) => {
         </AdminContextProvider>
     )
 }
+
+    AdminContextProvider.propTypes = {
+    children: PropTypes.node.isRequired,
+    };
+
 
 export default AdminContextProvider

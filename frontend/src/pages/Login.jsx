@@ -3,6 +3,7 @@ import React, {useContext, useEffect, useState} from 'react'
 import { AppContext } from '../context/AppContext'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
 
 const Login = () => {
 
@@ -23,7 +24,7 @@ const Login = () => {
       
       if(state === 'Sign up'){
 
-        const (data) = await axios.post(backendUrl + '/api/user/register', {name,password,email})
+        const { data } = await axios.post(backendUrl + '/api/user/register', {name,password,email})
           if(data.success){
             localStorage.setItem('token',data.token)
             setToken(data.token)
@@ -31,7 +32,7 @@ const Login = () => {
             toast.error(data.message)
           }
         } else {
-          const (data) = await axios.post(backendUrl + '/api/user/login', {password,email})
+          const { data } = await axios.post(backendUrl + '/api/user/login', {password,email})
             if(data.success){
               localStorage.setItem('token',data.token)
               setToken(data.token)
