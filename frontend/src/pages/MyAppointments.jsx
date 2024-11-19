@@ -4,6 +4,10 @@ import { AppContext } from '../context/AppContext'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 import {useNavigate} from 'react-router-dom'
+import { loadStripe } from '@stripe/stripe-js';
+
+
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 const MyAppointments = () => {
 
@@ -56,58 +60,28 @@ const MyAppointments = () => {
     }
   }
 
-  const initPay = (order) => {
-
-    const options = {
-      key: import.meta.env.ITE_RAZORPAY_KEY_ID,
-      amount: order.amount,
-      currency: order.currency,
-      name:'Appointment Payment',
-      description:'Appointment Payment',
-      order_id: order.id,
-      receipt: order.receipt,
-      handler: async (response) => {
-        console.log(response)
-
-        try {
-          
-          const {data} = await axios.post(backendUrl+'/api/user/verifyRazorpay', response,{headers:{token}})
-          if(data.success){
-            getUserAppointments()
-            navigate('/my-appointments')
-          }
-        } catch (error) {
-          console.log(error)
-          toast.error(error.message)
-        }
-        
-      }
-    }
-    
-
-    const rzp = new window.Razorpay(options)
-    rzp.open()
-    
-  }
-
-  const appointmentRazorpay = async (appointmentId) => {
-
+  const handleStripePayment = async (appointmentId) => {
     try {
-      
-      const {data} = await axios.post(backendUrl + '/api/user/payment-razorpay', {appointmentId}, {headers:{token}})
+      const { data } = await axios.post(
+        backendUrl + '/api/user/create-stripe-session',
+        { appointmentId },
+        { headers: { token } }
+      );
 
-      if(data.success){
-        initPay(data.order)
-      
+      if (data.success) {
+        const stripe = await stripePromise;
+        const { sessionId } = data;
+        await stripe.redirectToCheckout({ sessionId });
+      } else {
+        toast.error(data.message);
       }
-
     } catch (error) {
-      console.log(error)
-      toast.error(error.message)
+      console.log(error);
+      toast.error('Payment failed. Please try again.');
     }
+  };
 
-  }
-  
+
   useEffect(() => {
     if(token){
       getUserAppointments()
@@ -134,7 +108,7 @@ const MyAppointments = () => {
             <div></div>
             <div className='flex flex-col gap-2 justify-end'>
               {!item.cancelled && item.payment && !item.isCompleted && <button className='sm:min-w-48 py-2 border rounded text-stone-500 bg-indigo-50'>Paid</button> }
-              {!item.cancelled && !item.payment && !item.isCompleted && <button onClick={()=> appointmentRazorpay(item._id)} className='text-sm text-stone-500 text-center sm:min-w-48 py-2 border hover:bg-primary hover:text-white transition-all duration-300'>Pay Online</button> }
+              {!item.cancelled && !item.payment && !item.isCompleted && <button onClick={()=> handleStripePayment(item._id)} className='text-sm text-stone-500 text-center sm:min-w-48 py-2 border hover:bg-primary hover:text-white transition-all duration-300'>Pay Online</button> }
               {!item.cancelled && !item.isCompleted && <button onClick={()=>cancelAppointment(item._id)} className='text-sm text-stone-500 text-center sm:min-w-48 py-2 border hover:bg-red-600 hover:text-white transition-all duration-300'>Cancel appointment</button> }
               {item.cancelled && !item.isCompleted && <button className='sm:min-w-48 py-2 border-red-500 rounded text-red-500'>Appointment cancelled</button>}
               {item.isCompleted && <button className='sm:min-w-48 py-2 border border-green-500 rounded text-green-500'>Completed</button>}

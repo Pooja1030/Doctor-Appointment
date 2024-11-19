@@ -6,6 +6,10 @@ import jwt from "jsonwebtoken";
 import appointmentModel from "../models/appointmentModel.js"
 import userModel from "../models/userModel.js";
 
+// Initialize Stripe
+const stripeInstance = stripe(process.env.STRIPE_SECRET_KEY);
+
+
 // api for adding doctor
 const addDoctor = async (req,res) => {
 
@@ -156,41 +160,29 @@ const appointmentCancel = async (req,res) => {
     }
 }
 
-const razorpayInstance = new razorpay({
-    key_id:process.env.RAZORPAY_KEY_ID,
-    key_secret:process.env.RAZORPAY_KEY_SECRET
-})
-
-// API to make the payment of appointment using razorpay
-const paymentRazorpay = async (req,res) => {
-    
+// API to make payment of appointment using Stripe
+const paymentStripe = async (req, res) => {
     try {
-        
-        const {appointmentId} = req.body
-        const appointmentData = await appointmentModel.findById(appointmentId)
-        
-        if(!appointmentData || appointmentData.cancelled){
-            return res.json({success: false, message:"Appointment Cancelled or not found"})
-        }
-        
-        
-        // creating options for razorpay payment
-        const options = {
-            amount : appointmentData.amount * 100,
-            currency: process.env.CURRENCY,
-            receipt: appointmentId,
-        }
-        
-        // creation of an order
-        const order = await razorpayInstance.orders.create(options)
-        
-        res.json({success:true, order})
-        
+      const { appointmentId } = req.body;
+      const appointmentData = await appointmentModel.findById(appointmentId);
+  
+      if (!appointmentData || appointmentData.cancelled) {
+        return res.json({ success: false, message: "Appointment Cancelled or not found" });
+      }
+  
+      const paymentIntent = await stripeInstance.paymentIntents.create({
+        amount: appointmentData.amount * 100, // Convert to cents
+        currency: process.env.CURRENCY,
+        metadata: { appointmentId },
+      });
+  
+      res.json({ success: true, clientSecret: paymentIntent.client_secret });
     } catch (error) {
-        console.log(error)
-        res.json({success:false,message:error.message})
+      console.log(error);
+      res.json({ success: false, message: error.message });
     }
-}
+  };
+
 
 
 // API to get dashboard data for admin panel
@@ -218,4 +210,4 @@ const adminDashboard = async (req,res) => {
 }
 
 
-export {addDoctor, loginAdmin,allDoctors,appointmentsAdmin, appointmentCancel, adminDashboard}
+export {addDoctor, loginAdmin,allDoctors,appointmentsAdmin, appointmentCancel, adminDashboard, paymentStripe}
