@@ -3,7 +3,7 @@ import { getProfile, loginUser, registerUser, updateProfile,bookAppointment, lis
 import upload from '../middlewares/multer.js'
 import authUser from '../middlewares/authUser.js'
 import { verify } from 'jsonwebtoken'
-import { paymentStripe } from '../controllers/adminController.js'
+// import { paymentStripe } from '../controllers/adminController.js'
 
 const userRouter = express.Router()
 
