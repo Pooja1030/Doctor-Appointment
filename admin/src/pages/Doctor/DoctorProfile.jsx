@@ -38,15 +38,15 @@ const DoctorProfile = () => {
     }
   }
 
-  useEffect(()=>{
-    if(dToken){
-      getProfileData()
+  useEffect(() => {
+    if (dToken) {
+      getProfileData();
     }
-  },[dToken])
+  }, [dToken, getProfileData]);
+  
 
   return profileData && (
-    <div>
-      
+    <div>  
       <div className='flex flex-col gap-4 m-5'>
         <div>
           <img className='bg-primary/80 w-full sm:max-w-64 rounded-lg' src={profileData.image} alt='' />
