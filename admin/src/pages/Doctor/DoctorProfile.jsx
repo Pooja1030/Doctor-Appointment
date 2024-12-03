@@ -9,9 +9,7 @@ const DoctorProfile = () => {
 
   const { dToken, profileData, setProfileData, getProfileData, backendUrl} = useContext(DoctorContext)
   const {currency} = useContext(AppContext)
-
   const [isEdit, setIsEdit] = useState(false)
-
   const updateProfile = async () => {
 
     try {

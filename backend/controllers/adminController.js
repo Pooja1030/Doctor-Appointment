@@ -9,7 +9,6 @@ import userModel from "../models/userModel.js";
 // Initialize Stripe
 const stripeInstance = stripe(process.env.STRIPE_SECRET_KEY);
 
-
 // api for adding doctor
 const addDoctor = async (req,res) => {
 
@@ -19,7 +18,7 @@ const addDoctor = async (req,res) => {
         const imageFile = req.file
 
         // console.log({name, email, password, speciality, degree, experience, about, fees,address})
-
+    
 
         // checking for all data to add doctor
         
@@ -91,8 +90,6 @@ const loginAdmin = async (req,res) => {
         if(token_decode !== process.env.ADMIN_EMAIL + process.env.ADMIN_PASSWORD){
             
         }
-
-
     } catch(error){
         console.log(error)
         res.json({success:false, message:error.message})
@@ -135,8 +132,6 @@ const appointmentCancel = async (req,res) => {
 
         const appointmentData = await appointmentModel.findById(appointmentId)
 
-       
-
         await appointmentModel.findByIdAndUpdate(appointmentId, {cancelled:true})
 
         // releasing doctor slot
@@ -152,7 +147,6 @@ const appointmentCancel = async (req,res) => {
         await doctorModel.findByIdAndUpdate(docId, {slots_booked})
 
         res.json({success:true, message:"Appointment Cancelled"})
-
 
     } catch (error) {
         console.log(error)

@@ -21,8 +21,6 @@ const MyAppointments = () => {
     return dateArray[0]+ " " + months[Number(dateArray[1])] + " " + dateArray[2]
   }
 
-  
-
   const navigate = useNavigate()
 
   const getUserAppointments = async () => {

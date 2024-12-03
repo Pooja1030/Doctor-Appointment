@@ -81,8 +81,6 @@ const DoctorDashboard = () => {
         </div>
           </div>
 
-
-
         </div>
     </div>
   )

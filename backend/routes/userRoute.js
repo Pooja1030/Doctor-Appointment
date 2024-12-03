@@ -18,7 +18,4 @@ userRouter.post('/cancel-appointment',authUser,cancelAppointment)
 userRouter.post('/payment-stripe',authUser,paymentStripe)
 
 
-
-
-
 export default userRouter
