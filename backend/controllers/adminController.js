@@ -6,7 +6,7 @@ import jwt from "jsonwebtoken";
 import appointmentModel from "../models/appointmentModel.js"
 import userModel from "../models/userModel.js";
 
-// Initialize Stripe
+// Initialize the Stripe
 const stripeInstance = stripe(process.env.STRIPE_SECRET_KEY);
 
 // api for adding doctor
@@ -33,7 +33,7 @@ const addDoctor = async (req,res) => {
         }
         
         // validating strong password
-        if(password.length < 8){
+        if(password.length < 5){
             return res.json({success: false, message:"Please enter a strong password"})         
         }
 

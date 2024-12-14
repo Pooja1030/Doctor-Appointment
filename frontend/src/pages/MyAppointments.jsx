@@ -39,6 +39,8 @@ const MyAppointments = () => {
     }
   }
   
+
+  //  cancel appointment
   const cancelAppointment = async (appointmentId) => {
     try {
 
@@ -57,6 +59,8 @@ const MyAppointments = () => {
       toast.error(error.message)      
     }
   }
+
+  //  Handling the stripe payment
 
   const handleStripePayment = async (appointmentId) => {
     try {
